@@ -21,7 +21,7 @@ public class SimpleShell {
     }
     public static void main(String[] args) throws java.io.IOException {
 
-        YouAreEll urll = new YouAreEll(new MessageController(), new IdController());
+        YouAreEll webber = new YouAreEll(new MessageController(), new IdController());
         
         String commandLine;
         BufferedReader console = new BufferedReader
@@ -95,18 +95,18 @@ public class SimpleShell {
                 }
 
                 // // wait, wait, what curiousness is this?
-                // Process process = pb.start();
+                 Process process = pb.start();
 
-                // //obtain the input stream
-                // InputStream is = process.getInputStream();
-                // InputStreamReader isr = new InputStreamReader(is);
-                // BufferedReader br = new BufferedReader(isr);
+                 //obtain the input stream
+                 InputStream is = process.getInputStream();
+                 InputStreamReader isr = new InputStreamReader(is);
+                 BufferedReader br = new BufferedReader(isr);
 
-                // //read output of the process
-                // String line;
-                // while ((line = br.readLine()) != null)
-                //     System.out.println(line);
-                // br.close();
+                 //read output of the process
+                 String line;
+                 while ((line = br.readLine()) != null)
+                     System.out.println(line);
+                 br.close();
 
 
             }
@@ -123,10 +123,6 @@ public class SimpleShell {
              * 4. obtain the output stream
              * 5. output the contents returned by the command
              */
-
         }
-
-
     }
-
 }
