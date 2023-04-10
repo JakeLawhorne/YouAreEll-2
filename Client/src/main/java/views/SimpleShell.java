@@ -107,6 +107,7 @@ public class SimpleShell {
                 }
 
                 else if (list.contains("post-messages")) {
+                    String messageToPost = list.get(2);
 
                 }
                 // you need to add a bunch more.
