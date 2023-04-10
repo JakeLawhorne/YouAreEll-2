@@ -9,26 +9,27 @@ import java.util.List;
 
 import controllers.IdController;
 import controllers.MessageController;
+import controllers.TransactionController;
 import youareell.YouAreEll;
 
 // Simple Shell is a Console view for youareell.YouAreEll.
 public class SimpleShell {
-
-
     public static void prettyPrint(String output) {
         // yep, make an effort to format things nicely, eh?
-        System.out.println(output);
+        String[] lister = output.split(",");
+        for (String i: lister) {
+            System.out.println(i);
+        }
     }
     public static void main(String[] args) throws java.io.IOException {
+        YouAreEll webber = new YouAreEll(new TransactionController(), new MessageController(), new IdController());
 
-        YouAreEll webber = new YouAreEll(new MessageController(), new IdController());
-        
         String commandLine;
         BufferedReader console = new BufferedReader
                 (new InputStreamReader(System.in));
 
         ProcessBuilder pb = new ProcessBuilder();
-        List<String> history = new ArrayList<String>();
+        List<String> history = new ArrayList<>();
         int index = 0;
         //we break out with <ctrl c>
         while (true) {
@@ -38,7 +39,7 @@ public class SimpleShell {
 
             //input parsed into array of strings(command and arguments)
             String[] commands = commandLine.split(" ");
-            List<String> list = new ArrayList<String>();
+            List<String> list = new ArrayList<>();
 
             //if the user entered a return, just loop again
             if (commandLine.equals(""))
@@ -67,17 +68,46 @@ public class SimpleShell {
                 // Specific Commands.
 
                 // ids
-                if (list.contains("ids")) {
-                    String results = webber.get_ids();
+                if (list.contains("get-id")) {
+                    String results = webber.makecall("get-id", "", "");
                     SimpleShell.prettyPrint(results);
                     continue;
                 }
 
+                else if (list.contains("post-id"))
+                {
+                    if (list.size() >= 3) {
+                        String idtoRegister = list.get(1);
+                        String githubName = list.get(2);
+                        String results = webber.makecall("post-id", idtoRegister, githubName);
+                        SimpleShell.prettyPrint(results);
+                    } else {
+                        System.out.println("Please provide an ID and GitHub name.");
+                    }
+                    continue;
+                }
+
+                else if (list.contains("put-id")) {
+                    if (list.size() >= 3) {
+                        String idtoRegister = list.get(1);
+                        String githubName = list.get(2);
+                        String results = webber.makecall("put-id", idtoRegister, githubName);
+                        SimpleShell.prettyPrint(results);
+                    } else {
+                        System.out.println("Please provide an ID and GitHub name.");
+                    }
+                    continue;
+                }
+
                 // messages
-                if (list.contains("messages")) {
-                    String results = webber.get_messages();
+                if (list.contains("get-messages")) {
+                    String results = webber.makecall("get-messages", "", "");
                     SimpleShell.prettyPrint(results);
                     continue;
+                }
+
+                else if (list.contains("post-messages")) {
+
                 }
                 // you need to add a bunch more.
 
@@ -86,6 +116,7 @@ public class SimpleShell {
                     pb.command(history.get(history.size() - 2));
 
                 }//!<integer value i> command
+
                 else if (list.get(list.size() - 1).charAt(0) == '!') {
                     int b = Character.getNumericValue(list.get(list.size() - 1).charAt(1));
                     if (b <= history.size())//check if integer entered isn't bigger than history size
@@ -94,21 +125,19 @@ public class SimpleShell {
                     pb.command(list);
                 }
 
-                // // wait, wait, what curiousness is this?
-                 Process process = pb.start();
+                // wait, wait, what curiousness is this?
+                Process process = pb.start();
 
-                 //obtain the input stream
-                 InputStream is = process.getInputStream();
-                 InputStreamReader isr = new InputStreamReader(is);
-                 BufferedReader br = new BufferedReader(isr);
+                //obtain the input stream
+                InputStream is = process.getInputStream();
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr);
 
-                 //read output of the process
-                 String line;
-                 while ((line = br.readLine()) != null)
-                     System.out.println(line);
-                 br.close();
-
-
+                //read output of the process
+                String line;
+                while ((line = br.readLine()) != null)
+                    System.out.println(line);
+                br.close();
             }
 
             //catch ioexception, output appropriate message, resume waiting for input
@@ -123,6 +152,9 @@ public class SimpleShell {
              * 4. obtain the output stream
              * 5. output the contents returned by the command
              */
+
         }
     }
+
+
 }
